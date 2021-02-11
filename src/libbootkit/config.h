@@ -76,56 +76,7 @@ static const config_t configs[] = {
         .clocks_quiesce = 0x5A88 + 1,
         .enter_critical_section = 0x6054 + 1,
         .arch_cpu_quiesce = 0x6C44 + 1
-    },
-
-    {
-        .cpid = 0x7002,
-        .platform = "s7002",
-        .loadaddr = 0x46018000,
-        .loadsize = 0x30000,
-        .memmove = 0x89F4,
-        .platform_get_boot_trampoline = 0x46D8 + 1,
-        .platform_bootprep = 0x42F4 + 1,
-        .usb_quiesce_no_free = 0x26FC + 1,
-        .timer_stop_all = 0xD98 + 1,
-        .interrupt_mask_all = 0x4C8C + 1,
-        .clocks_quiesce = 0x4C0C + 1,
-        .enter_critical_section = 0x50B0 + 1,
-        .arch_cpu_quiesce = 0x5F24 + 1
-    },
-
-    {
-        .cpid = 0x8002,
-        .platform = "t8002",
-        .loadaddr = 0x48818000,
-        .loadsize = 0x108000,
-        .memmove = 0xB6F8,
-        .platform_get_boot_trampoline = 0x6774 + 1,
-        .platform_bootprep = 0x6260 + 1,
-        .usb_quiesce_no_free = 0x8A88 + 1,
-        .interrupt_mask_all = 0x1410 + 1,
-        .timer_stop_all = 0x124C + 1,
-        .clocks_quiesce = 0x6DE4 + 1,
-        .enter_critical_section = 0x734C + 1,
-        .arch_cpu_quiesce = 0x8328 + 1
-    },
-
-    {
-        .cpid = 0x8004,
-        .platform = "t8004",
-        .loadaddr = 0x48818000,
-        .loadsize = 0x128000,
-        .memmove = 0xA884,
-        .platform_get_boot_trampoline = 0x5864 + 1,
-        .platform_bootprep = 0x52A0 + 1,
-        .usb_quiesce_no_free = 0x7C18 + 1,
-        .interrupt_mask_all = 0x1414 + 1,
-        .timer_stop_all = 0x1250 + 1,
-        .clocks_quiesce = 0x5F24 + 1,
-        .enter_critical_section = 0x648C + 1,
-        .arch_cpu_quiesce = 0x74B8 + 1
     }
-
 };
 
 #endif
