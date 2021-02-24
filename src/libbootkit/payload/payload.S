@@ -6,10 +6,10 @@
 .global _start
 .code 16
 _start:
-	LDR R0, LOADADDR
-	LDR R1, IMAGEADDR
-	LDR R2, IMAGESIZE
-	LDR R4, memmove
+	LDR R4, security_consolidate_environment
+	BLX R4
+
+	LDR R4, security_sidp_seal_rom_manifest
 	BLX R4
 
     LDR R4, platform_get_boot_trampoline
@@ -21,7 +21,7 @@ _start:
 	LDR R4, platform_bootprep
 	BLX R4
 
-	LDR R4, usb_quiesce_no_free
+	LDR R4, usb_controller_stop
 	BLX R4
 
 	LDR R4, timer_stop_all
@@ -46,41 +46,39 @@ _start:
 
 	BLX R5
 
-	loop:
-		B loop
+loop:
+	B loop
+
 
 LOADADDR:
 	.long 0xDEAD0001
 
-IMAGEADDR:
+security_consolidate_environment:
 	.long 0xDEAD0002
 
-IMAGESIZE:
+security_sidp_seal_rom_manifest:
 	.long 0xDEAD0003
 
-memmove:
+platform_get_boot_trampoline:
 	.long 0xDEAD0004
 
-platform_get_boot_trampoline:
+platform_bootprep:
 	.long 0xDEAD0005
 
-platform_bootprep:
+usb_controller_stop:
 	.long 0xDEAD0006
 
-usb_quiesce_no_free:
+interrupt_mask_all:
 	.long 0xDEAD0007
 
-interrupt_mask_all:
+timer_stop_all:
 	.long 0xDEAD0008
 
-timer_stop_all:
+clocks_quiesce:
 	.long 0xDEAD0009
 
-clocks_quiesce:
+enter_critical_section:
 	.long 0xDEAD000A
 
-enter_critical_section:
-	.long 0xDEAD000B
-
 arch_cpu_quiesce:
-	.long 0xDEAD000C
+	.long 0xDEAD000B

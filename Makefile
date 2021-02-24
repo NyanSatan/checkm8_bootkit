@@ -18,7 +18,7 @@ LDLIBS = -lirecovery-1.0
 LDLIBS += -framework IOKit
 LDLIBS += -framework CoreFoundation
 
-BIN2C = bin2c
+BIN2C = tools/bin2c.py
 
 
 BUILD_PATH = build
@@ -28,7 +28,7 @@ SOURCES = \
 
 OBJECTS = $(addprefix $(BUILD_PATH)/, $(SOURCES:.c=.o))
 
-RESULT = $(BUILD_PATH)/checkm8_bootkit
+RESULT = $(BUILD_PATH)/checkm8_bootkit_watch
 
 DIR_HELPER = mkdir -p $(@D)
 
