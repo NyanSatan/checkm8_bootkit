@@ -45,3 +45,7 @@ Then just use `make`:
         linking
 %%%%% done building
 ```
+
+## TODOs
+
+* iOS port to use with Haywire (or whatever)
