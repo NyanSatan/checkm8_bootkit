@@ -19,16 +19,6 @@ typedef struct {
     uint32_t arch_cpu_quiesce;
 } config_t;
 
-/*
-static const config_t s5l8942x_config = {
-    .loadaddr = 0x34000000,
-    .loadsize = 0x2C000,
-    .memmove = 0x980C,
-    .platform_get_boot_trampoline = 0x6F04 + 1,
-    .prepare_and_jump = 0x60A0 + 1
-};
-*/
-
 static const config_t configs[] = {
     {
         .cpid = 0x8950,

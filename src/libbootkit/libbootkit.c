@@ -8,6 +8,7 @@
 #include "libbootkit.h"
 #include "payload.h"
 #include "config.h"
+#include "common.c" // I am the bad guy
 
 typedef struct {
     uint32_t magic;
@@ -16,67 +17,6 @@ typedef struct {
     uint32_t function;
     uint8_t padding[4];
 } usb_command_t;
-
-const config_t *get_config(uint32_t cpid) {
-
-    for (int i = 0; i < sizeof(configs) / sizeof(config_t); i++) {
-        const config_t *config = &configs[i];
-
-        if (config->cpid == cpid)
-            return config;
-    }
-
-    return NULL;
-}
-
-#define MAX_PACKET_SIZE     0x800
-#define USB_SMALL_TIMEOUT   100
-#define USB_TIMEOUT         5000
-
-size_t min(size_t first, size_t second) {
-    if (first < second)
-        return first;
-    else
-        return second;
-}
-
-int send_data(irecv_client_t client, unsigned char *command, size_t length) {
-    size_t index = 0;
-
-    while (index < length) {
-        size_t amount = min(length - index, MAX_PACKET_SIZE);
-        if (irecv_usb_control_transfer(client, 0x21, 1, 0, 0, command + index, amount, USB_TIMEOUT) != amount)
-            return -1;
-        index += amount;
-    }
-
-    return 0;
-}
-
-int send_command(irecv_client_t client, unsigned char *command, size_t length) {
-    printf("sending command...\n");
-
-    unsigned char dummy_data[16];
-    memset(&dummy_data, 0x0, sizeof(dummy_data));
-
-    if (send_data(client, (unsigned char*)&dummy_data, sizeof(dummy_data)) != 0) {
-        printf("ERROR: failed to send dummy data\n");
-        return -1;        
-    }
-
-    irecv_usb_control_transfer(client, 0x21, 1, 0, 0, NULL, 0, USB_SMALL_TIMEOUT);
-    irecv_usb_control_transfer(client, 0xA1, 3, 0, 0, (unsigned char*)&dummy_data, 6, USB_SMALL_TIMEOUT);
-    irecv_usb_control_transfer(client, 0xA1, 3, 0, 0, (unsigned char*)&dummy_data, 6, USB_SMALL_TIMEOUT);
-
-    if (send_data(client, command, length) != 0) {
-        printf("ERROR: failed to send command buffer\n");
-        return -1;        
-    }
-
-    irecv_usb_control_transfer(client, 0xA1, 2, 0xFFFF, 0, (unsigned char*)&dummy_data, 1, USB_TIMEOUT);
-
-    return 0;
-}
 
 typedef struct __attribute__((packed)) {
     uint32_t loadaddr;
@@ -93,7 +33,17 @@ typedef struct __attribute__((packed)) {
     uint32_t arch_cpu_quiesce;
 } payload_offsets_t;
 
-unsigned char *construct_payload(const config_t *config, off_t bootloader_offset, size_t bootloader_length) {
+const config_t *get_config(uint32_t cpid) {
+    for (int i = 0; i < sizeof(configs) / sizeof(config_t); i++) {
+        const config_t *config = &configs[i];
+        if (config->cpid == cpid)
+            return config;
+    }
+
+    return NULL;
+}
+
+static unsigned char *construct_payload(const config_t *config, off_t bootloader_offset, size_t bootloader_length) {
     printf("constructing payload...\n");
     
     unsigned char *payload_copy = malloc(sizeof(payload));
@@ -135,9 +85,7 @@ unsigned char *construct_payload(const config_t *config, off_t bootloader_offset
     return payload_copy;
 }
 
-#define ARM_RESET_VECTOR 0xEA00000E
-
-int construct_command(irecv_client_t client,
+static int construct_command(irecv_client_t client,
                       const char *bootloader,
                       size_t bootloader_length,
                       unsigned char **result,
@@ -198,57 +146,6 @@ int construct_command(irecv_client_t client,
 
     *result = buffer;
     *result_length = command_length;
-
-    return 0;
-}
-
-int validate_device(irecv_client_t client) {
-    const struct irecv_device_info *info = irecv_get_device_info(client);
-
-    int mode;
-
-    if (irecv_get_mode(client, &mode) != IRECV_E_SUCCESS) {
-        printf("ERROR: failed to get device mode\n");
-        return -1;
-    }
-
-    if (mode != IRECV_K_DFU_MODE) {
-        printf("ERROR: non-DFU device found\n");
-        return -1;
-    }
-
-    if (!info->srtg) {
-        printf("ERROR: soft-DFU device found\n");
-        return -1;
-    }
-
-    if (!strstr(info->serial_string, "PWND:[checkm8]")) {
-        printf("ERROR: non-pwned-DFU device found\n");
-        return -1;
-    }
-
-    return 0;
-}
-
-int save_command(irecv_client_t client, unsigned char *command, size_t length) {
-    const struct irecv_device_info *info = irecv_get_device_info(client);
-
-    char path[40];
-    snprintf((char *)&path, sizeof(path), "/tmp/%04X-%016llX_%08X", info->cpid, info->ecid, arc4random_uniform(UINT32_MAX));
-
-    int fd = open(path, O_WRONLY | O_CREAT, 0644);
-
-    if (fd < 0) {
-        printf("ERROR: failed to create output file\n");
-        return -1;
-    }
-
-    if (write(fd, command, length) != length) {
-        printf("ERROR: failed to write to output file\n");
-        return -1;
-    }
-
-    printf("written to %s\n", path);
 
     return 0;
 }
