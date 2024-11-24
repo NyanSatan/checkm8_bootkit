@@ -3,19 +3,23 @@ CFLAGS = -O3 -MMD
 
 LD = clang
 
+ARCHS = -arch x86_64 -arch arm64
+MACOSX_MIN_VERSION = -mmacosx-version-min=10.7
+
 STATIC_LIBS = static-libs
 
 ifneq ($(wildcard $(STATIC_LIBS)),)
-CFLAGS += -arch arm64
-CFLAGS += -arch x86_64
-CFLAGS += -mmacosx-version-min=10.7
-LDLIBS += -L$(STATIC_LIBS) 
+CFLAGS += $(ARCHS)
+CFLAGS += $(MACOSX_MIN_VERSION)
+LDFLAGS += $(ARCHS)
+LDFLAGS += $(MACOSX_MIN_VERSION)
+LDFLAGS += -L$(STATIC_LIBS) 
 LDLIBS += -limobiledevice-glue-1.0
 LDLIBS += -framework IOKit 
 LDLIBS += -framework CoreFoundation
 endif
 
-LDFLAGS += -lirecovery-1.0
+LDLIBS += -lirecovery-1.0
 
 VMACHO = vmacho
 

@@ -175,5 +175,7 @@ int dfu_boot(irecv_client_t client, const char *bootloader, size_t bootloader_le
         return -1;
     }
 
+    trigger_command(client, NULL, 0);
+
     return 0;
 }
