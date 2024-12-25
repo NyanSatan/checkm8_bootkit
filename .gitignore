@@ -1,3 +1,4 @@
-static-libs/
-build/
+/static-libs
+/build
 .DS_Store
+/include/IOKit
