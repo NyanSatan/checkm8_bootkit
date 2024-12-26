@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
         goto usage;
     }
 
-    irecv_client_t client;
+    irecv_client_t client = NULL;
     if (irecv_open_with_ecid(&client, 0) != IRECV_E_SUCCESS) {
         printf("ERROR: failed to open DFU-device\n");
         return -1;
@@ -230,6 +230,10 @@ boot_out:
     }
 
 out:
+    if (client) {
+        irecv_close(client);
+    }
+
     if (ret == 0) {
         printf("DONE\n");
     }

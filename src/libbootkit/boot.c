@@ -111,7 +111,6 @@ static int construct_command_watch(irecv_client_t client,
     memmove(buffer, bootloader, bootloader_length);
 
     unsigned char *prepared_payload = construct_payload_watch(config);
-
     if (!prepared_payload) {
         printf("failed to construct payload\n");
         free(buffer);
@@ -120,7 +119,7 @@ static int construct_command_watch(irecv_client_t client,
 
     memmove(buffer + bootloader_length, prepared_payload, sizeof(payload_watch));
 
-    free((void*)prepared_payload);
+    free(prepared_payload);
 
     *result = buffer;
     *result_length = command_length;
@@ -142,35 +141,43 @@ int dfu_boot_watch(irecv_client_t client, const uint8_t *bootloader, size_t boot
         return -1;
     }
 
-    unsigned char *command;
-    size_t command_length;
+    unsigned char *command = NULL;
+    size_t command_length = 0;
 
     if (construct_command_watch(client, config, bootloader, bootloader_length, &command, &command_length) != 0) {
         printf("failed to construct command\n");
         return -1;
     }
 
+    int ret = -1;
+
     if (debug) {
-        int ret = save_command(client, command, command_length);
-        irecv_close(client);
-        return ret;
+        ret = save_command(client, command, command_length);
+        goto out;
     }
 
     if (write32(client, config, config->boot_config_watch.func_ptr, config->loadaddr + bootloader_length + 1) != 0) {
         printf("failed to overwrite function pointer\n");
-        return -1;
+        goto out;
     }
 
     if (send_command(client, command, command_length) != 0) {
         printf("failed to send command\n");
-        return -1;
+        goto out;
     }
 
     printf("requesting DFU abort\n");
 
     irecv_usb_control_transfer(client, 0x21, 4, 0, 0, NULL, 0, USB_SMALL_TIMEOUT);
 
-    return 0;
+    ret = 0;
+
+out:
+    if (command) {
+        free(command);
+    }
+
+    return ret;
 }
 
 /*
@@ -284,7 +291,6 @@ static int construct_command(irecv_client_t client,
     memmove(buffer + bootloader_offset, bootloader, bootloader_length);
 
     unsigned char *prepared_payload = construct_payload(config, bootloader_offset, bootloader_length);
-
     if (!prepared_payload) {
         printf("failed to construct payload\n");
         free(buffer);
@@ -293,7 +299,7 @@ static int construct_command(irecv_client_t client,
 
     memmove(buffer + payload_offset, prepared_payload, sizeof(payload));
 
-    free((void*)prepared_payload);
+    free(prepared_payload);
 
     *result = buffer;
     *result_length = command_length;
@@ -307,26 +313,34 @@ int dfu_boot(irecv_client_t client, const uint8_t *bootloader, size_t bootloader
         return -1;
     }
 
-    unsigned char *command;
-    size_t command_length;
+    unsigned char *command = NULL;
+    size_t command_length = 0;
 
     if (construct_command(client, bootloader, bootloader_length, &command, &command_length) != 0) {
         printf("failed to construct command\n");
         return -1;
     }
 
+    int ret = -1;
+
     if (debug) {
-        int ret = save_command(client, command, command_length);
-        irecv_close(client);
-        return ret;
+        ret = save_command(client, command, command_length);
+        goto out;
     }
 
     if (send_command(client, command, command_length) != 0) {
         printf("failed to send command\n");
-        return -1;
+        goto out;
     }
 
     trigger_command(client, NULL, 0);
 
-    return 0;
+    ret = 0;
+
+out:
+    if (command) {
+        free(command);
+    }
+
+    return ret;
 }
