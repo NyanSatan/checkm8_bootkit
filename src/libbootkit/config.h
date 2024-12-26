@@ -37,7 +37,6 @@ typedef struct {
     uint32_t loadsize;
     uint32_t demotion_reg;
     uint32_t aes_crypto_cmd;
-    bool simple;
     bool watch;
     union {
         const boot_config_t boot_config;
@@ -51,7 +50,7 @@ static const rom_config_t rom_configs[] = {
         .platform = "s5l8747x",
         .loadaddr = 0x22000000,
         .loadsize = 0x19000,
-        .aes_crypto_cmd = 0x6540+1,
+        .aes_crypto_cmd = 0x6540 + 1,
         .boot_config = {
             .memmove = 0x8F50,
             .platform_get_boot_trampoline = 0x6164 + 1,
@@ -65,6 +64,19 @@ static const rom_config_t rom_configs[] = {
         }
     },
     {
+        .cpid = 0x8940,
+        .platform = "s5l8940x",
+        .loadaddr = 0x34000000,
+        .loadsize = 0x2C000,
+        .demotion_reg = 0x3F500000,
+        .aes_crypto_cmd = 0x6F20 + 1,
+        .boot_config = {
+            .memmove = 0x916C,
+            .platform_get_boot_trampoline = 0x6B64 + 1,
+            .prepare_and_jump = 0x5E60 + 1
+        }
+    },
+    {
         .cpid = 0x8942,
         .platform = "s5l8942x",
         .loadaddr = 0x34000000,
@@ -75,6 +87,19 @@ static const rom_config_t rom_configs[] = {
             .memmove = 0x980C,
             .platform_get_boot_trampoline = 0x6F04 + 1,
             .prepare_and_jump = 0x60A0 + 1
+        }
+    },
+    {
+        .cpid = 0x8945,
+        .platform = "s5l8945x",
+        .loadaddr = 0x34000000,
+        .loadsize = 0x2C000,
+        .demotion_reg = 0x3F500000,
+        .aes_crypto_cmd = 0x7000 + 1,
+        .boot_config = {
+            .memmove = 0x942C,
+            .platform_get_boot_trampoline = 0x6C44 + 1,
+            .prepare_and_jump = 0x5E80 + 1
         }
     },
     {

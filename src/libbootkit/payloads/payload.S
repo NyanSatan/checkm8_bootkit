@@ -14,9 +14,9 @@ _start:
     LDR R4, prepare_and_jump
     CBZ R4, avoid_free
 
-    LDR R1, LOADADDR
-    MOV R2, #0x0
-    MOV R3, #0x0
+    MOV R1, R0
+    MOV R0, #0x0
+    LDR R2, LOADADDR
 
     BLX R4
 
