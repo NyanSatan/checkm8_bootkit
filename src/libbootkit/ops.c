@@ -20,6 +20,11 @@ int demote_op(irecv_client_t client, const rom_config_t *config, bool demote) {
     printf("curr: 0x%08x\n", value);
 
     if (demote) {
+        if ((value & 0x1) == 0x0) {
+            printf("already demoted\n");
+            return -1;
+        }
+
         value &= ~0x1;
     } else {
         value |= 0x1;

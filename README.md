@@ -1,6 +1,6 @@
 # checkm8_bootkit
 
-Little utility to boot **iBoot** on some **checkm8**-able platforms. Now also can decrypt KBAGs and (un)demote
+Little utility to boot **iBoot** on some **checkm8**-able platforms. Now also can decrypt KBAGs and demote
 
 It doesn't require any modifications to **ipwndfu**/**gaster**/etc. shellcodes since it utilizes **ipwndfu**'s [custom protocol](https://github.com/axi0mX/ipwndfu/blob/master/src/usb_0xA1_2_armv7.S)
 
@@ -28,7 +28,6 @@ where VERB is one of the following:
         boot <bootloader>
         kbag <kbag>
         demote
-        undemote
 
 supported platforms:
         s5l8747x, s5l8940x, s5l8942x, s5l8945x, s5l8947x, s5l8950x, s7002, t8002, t8004

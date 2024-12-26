@@ -43,7 +43,8 @@ void print_usage(const char *program_name) {
     printf("\tboot <bootloader>\n");
     printf("\tkbag <kbag>\n");
     printf("\tdemote\n");
-    printf("\tundemote\n");
+    /* doesn't seem to actually work on old platforms */
+    // printf("\tundemote\n");
 
     printf("\nsupported platforms:\n\t");
 
@@ -81,6 +82,8 @@ int main(int argc, char *argv[]) {
     uint8_t kbag[KBAG_LEN_256] = { 0 };
     size_t kbag_len = 0;
 
+    irecv_client_t client = NULL;
+
     if (strcmp(argv[1], "boot") == 0) {
         verb = VERB_BOOT;
 
@@ -99,18 +102,18 @@ int main(int argc, char *argv[]) {
         bootloader_size = lseek(fd, 0, SEEK_END);
         if (!bootloader_size) {
             printf("bootloader is empty?!\n");
-            goto out;
+            goto boot_out;
         }
 
         bootloader_buffer = malloc(bootloader_size);
         if (!bootloader_buffer) {
             printf("out of memory\n");
-            goto out;
+            goto boot_out;
         }
 
         if (pread(fd, bootloader_buffer, bootloader_size, 0) != bootloader_size) {
             printf("failed to read bootloader\n");
-            goto out;
+            goto boot_out;
         }
 
         close(fd);
@@ -143,15 +146,15 @@ int main(int argc, char *argv[]) {
 
     } else if (strcmp(argv[1], "demote") == 0) {
         verb = VERB_DEMOTE;
-    } else if (strcmp(argv[1], "undemote") == 0) {
-        verb = VERB_UNDEMOTE;
-    }
+    } 
+    // else if (strcmp(argv[1], "undemote") == 0) {
+    //     verb = VERB_UNDEMOTE;
+    // }
 
     if (verb == VERB_NONE) {
         goto usage;
     }
 
-    irecv_client_t client = NULL;
     if (irecv_open_with_ecid(&client, 0) != IRECV_E_SUCCESS) {
         printf("ERROR: failed to open DFU-device\n");
         return -1;
@@ -211,11 +214,11 @@ int main(int argc, char *argv[]) {
             break;
         }
 
-        case VERB_UNDEMOTE: {
-            printf("undemoting...\n");
-            ret = demote_op(client, config, false);
-            break;
-        }
+        // case VERB_UNDEMOTE: {
+        //     printf("undemoting...\n");
+        //     ret = demote_op(client, config, false);
+        //     break;
+        // }
     }
 
     goto out;
