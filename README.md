@@ -11,15 +11,12 @@ You can run it on iOS as well (if you are lucky)
 * **S5L8940X** - Apple A5
 * **S5L8942X** - Apple A5 (32nm)
 * **S5L8945X** - Apple A5X
+* **S5L8947X** - Apple A5 (single-core)
 * **S5L8950X** - Apple A6
 * **S5L8747X** - Haywire SoC
 * **S7002** - Apple S1
 * **T8002** - Apple S1P/S2/T1
 * **T8004** - Apple S3
-
-### Have offsets, but untested
-
-* **S5L8947X** - Apple A5 (single-core)
 
 ## Usage
 
