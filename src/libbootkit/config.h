@@ -140,6 +140,25 @@ static const rom_config_t rom_configs[] = {
             .arch_cpu_quiesce = 0x6ECC + 1
         }
     },
+    {
+        .cpid = 0x8955,
+        .platform = "s5l8955x",
+        .loadaddr = 0x10000000,
+        .loadsize = 0x60000,
+        .demotion_reg = 0x3F500000,
+        .aes_crypto_cmd = 0x7340 + 1,
+        .boot_config = {
+            .memmove = 0x9B0C,
+            .platform_get_boot_trampoline = 0x6EC4 + 1,
+            .platform_bootprep = 0x5628 + 1,
+            .usb_quiesce_no_free = 0x381C + 1,
+            .interrupt_mask_all = 0xDC4 + 1,
+            .timer_stop_all = 0xAB7E + 1, //nullsub
+            .clocks_quiesce = 0x5C70 + 1,
+            .enter_critical_section = 0x6380 + 1,
+            .arch_cpu_quiesce = 0x6F0C + 1
+        }
+    },
     {       
         .cpid = 0x7002,        
         .platform = "s7002",       

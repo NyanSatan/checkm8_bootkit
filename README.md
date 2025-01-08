@@ -13,6 +13,7 @@ You can run it on iOS as well (if you are lucky)
 * **S5L8945X** - Apple A5X
 * **S5L8947X** - Apple A5 (single-core)
 * **S5L8950X** - Apple A6
+* **S5L8955X** - Apple A6X
 * **S5L8747X** - Haywire SoC
 * **S7002** - Apple S1
 * **T8002** - Apple S1P/S2/T1
@@ -29,7 +30,7 @@ where VERB is one of the following:
         demote
 
 supported platforms:
-        s5l8747x, s5l8940x, s5l8942x, s5l8945x, s5l8947x, s5l8950x, s7002, t8002, t8004
+        s5l8747x, s5l8940x, s5l8942x, s5l8945x, s5l8947x, s5l8950x, s5l8955x, s7002, t8002, t8004
 ```
 
 * `bootloader` must be a path to raw unpacked **iBoot** image (usually you'd want to load **iBSS**)
